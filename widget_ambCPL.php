@@ -75,30 +75,60 @@ class widget_ambCPL extends WP_Widget {
 	}
 
 	function widget( $args, $instance ) {
+		//open widget
+			echo $args['before_widget'];
+		//store layout name (from form method)
+			$layoutFolder = $instance['layout'];
 
-		$layoutFolder = $instance['layout'];
+		//gets js (optional)
+			$jsFilePath = $this->getFilesPaths('js', $layoutFolder);
+			if( file_exists($jsFilePath) ){
+				$jsEnqueueURL = $this->sanitizePathToURL($jsFilePath);
+				wp_register_script( 'ambCPL-layout-js-1', $jsEnqueueURL, array('jquery') );
+				wp_enqueue_script( 'ambCPL-layout-js-1');
+			} 
+		//gets css (optional)
+			$cssFilePath = $this->getFilesPaths('css', $layoutFolder);
+			if( file_exists($cssFilePath) ){
+				$cssEnqueueURL = $this->sanitizePathToURL($cssFilePath);
+				wp_register_style( 'ambCPL-layout-1', $cssEnqueueURL);
+				wp_enqueue_style( 'ambCPL-layout-1');
+			} 
 
-		//gets js
-		$jsFilePath = $this->getFilesPaths('js', $layoutFolder);
-		if( file_exists($jsFilePath) ){
-			$jsEnqueueURL = $this->sanitizePathToURL($jsFilePath);
-			wp_register_script( 'ambCPL-layout-js-1', $jsEnqueueURL, array('jquery') );
-			wp_enqueue_script( 'ambCPL-layout-js-1');
-		} 
-		//gets css
-		$cssFilePath = $this->getFilesPaths('css', $layoutFolder);
-		if( file_exists($cssFilePath) ){
-			$cssEnqueueURL = $this->sanitizePathToURL($cssFilePath);
-			wp_register_style( 'ambCPL-layout-1', $cssEnqueueURL);
-			wp_enqueue_style( 'ambCPL-layout-1');
-		} 
-		//gets Layout
-		$layoutFilePath = $this->getFilesPaths('php', $layoutFolder);
-		if( file_exists($layoutFilePath) ){
-			require_once($layoutFilePath); } 
+
+		//before loop content
+				$beforeFilePath = $this->getFilesPaths('php', $layoutFolder, 'before');
+				if( file_exists($beforeFilePath) ){
+					require_once($beforeFilePath); 
+				}else{ echo "<ul>"; }
+		// The loop
+			global $post;
+			$args = array( 
+				'numberposts' => 3 
+			);
+			$ambCPL_posts = get_posts( $args );
+			foreach( $ambCPL_posts as $post ) :  setup_postdata($post);
+
+			//gets Layout
+				$layoutFilePath = $this->getFilesPaths('php', $layoutFolder);
+				if( file_exists($layoutFilePath) ){
+					include($layoutFilePath); 
+				}else{
+					echo '<li><a href="'.get_permalink().'">'.get_the_title().'</a></li>';
+				}
+
+			endforeach; wp_reset_postdata();
+		//after loop content
+			$afterFilePath = $this->getFilesPaths('php', $layoutFolder, 'after');
+			if( file_exists($afterFilePath) ){
+				require_once($afterFilePath); 
+			}else{ echo "</ul>"; }
+
+		//close widget
+			echo $args['after_widget'];
 	}
 
-	function getFilesPaths($type, $folderName){
+	function getFilesPaths($type, $folderName, $location = "loop"){
 		$filePath = "";
 		if(is_dir(AMB_LAYOUT_DIR.$folderName)){
 			foreach (new DirectoryIterator(AMB_LAYOUT_DIR.$folderName) as $filesInfo) {
@@ -108,7 +138,7 @@ class widget_ambCPL extends WP_Widget {
 
 			        if( $filesInfo->getExtension() != 'php' ){
 			        	$filePath = $thisFilePath;
-			        }else if(strpos($thisFileName,'layout_') === 0){
+			        }else if(strpos($thisFileName, $location.'_') === 0){
 			        	$filePath = $thisFilePath;
 			        }
 			    }
