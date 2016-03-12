@@ -1,0 +1,20 @@
+###############
+### For 0.1 ###
+###############
+
+-form settings (loop options)
+-get post type, categories, etc methods
+-add form options to loop query
+
+
+###############
+### For 0.2 ###
+###############
+
+-create builtIn layouts (slider, etc)
+-documentation
+
+
+#############################
+### For 1.0 (beta tester) ###
+#############################
