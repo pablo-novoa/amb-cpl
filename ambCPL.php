@@ -13,7 +13,7 @@ class ambCPL{
 	}
 
 	private function __construct() {
-		
+		add_action( 'widgets_init', array($this, 'register_plugin_widget') );
 	}
 
 	public static function activate() {
@@ -30,6 +30,10 @@ class ambCPL{
 			return;
 	}
 
+
+	public static function register_plugin_widget() {
+		register_widget( 'AmebaCPL\widget_ambCPL' );
+	}
 
 }
 

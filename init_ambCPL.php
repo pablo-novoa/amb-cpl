@@ -1,6 +1,6 @@
 <?php 
 /**
-* Plugin Name: Ameba - Custom Post List
+* Plugin Name: Ameba - Custom Post List (alpha)
 * Description: Description
 * Plugin URI: http://#
 * Author: Author
