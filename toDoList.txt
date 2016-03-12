@@ -5,6 +5,7 @@
 -form settings (loop options)
 -get post type, categories, etc methods
 -add form options to loop query
+-loop args switcher (for diferents form method settings)
 
 
 ###############
