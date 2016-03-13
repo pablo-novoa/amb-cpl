@@ -12,6 +12,7 @@
 ### For 0.2 ###
 ###############
 
+-improve css and js enqueues
 -create builtIn layouts (slider, etc)
 -documentation
 
