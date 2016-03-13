@@ -3,6 +3,7 @@
 ###############
 
 -form settings (loop options)
+-add default layout option on the form select (returns no value)
 -get post type, categories, etc methods
 -add form options to loop query
 -loop args switcher (for diferents form method settings)
