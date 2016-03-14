@@ -13,7 +13,7 @@
 ### For 0.2 ###
 ###############
 
--improve css and js enqueues
+-improve css and js enqueues (test to add register at constructor and enqueue at output method)
 -create builtIn layouts (slider, etc)
 -documentation
 
@@ -21,3 +21,5 @@
 #############################
 ### For 1.0 (beta tester) ###
 #############################
+
+-try unit tests
