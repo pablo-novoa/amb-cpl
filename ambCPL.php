@@ -18,7 +18,8 @@ class ambCPL{
 
 	public static function activate() {
 		if(!is_dir(AMB_LAYOUT_DIR)){
-			mkdir(AMB_LAYOUT_DIR);
+			mkdir(AMB_LAYOUT_DIR, 0777, true);
+			chmod(AMB_LAYOUT_DIR, 0777);
 		}
 	}
 
