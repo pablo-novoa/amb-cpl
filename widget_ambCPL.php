@@ -25,18 +25,15 @@ class widget_ambCPL extends WP_Widget {
             (array)$instance,
             array(
                 'title'      => '',
-                'layout' => ''
-                /*'postType' => 'post',
-                'postCat' => '',
-                'limit' => '3',
-                'layout' => '1',
-                'showSource' => NULL,
-                'showDate' => NULL,
-                'showExcerpt' => NULL,
-                'imgSize' => 'medium',
-                'imgMask' => NULL*/
+                'layout' => '',
+                'postType' => 'post',
+                /*'postCat' => '',*/
+                'offset' => '0',
+                'limit' => '-1'
             )
         );
+
+        $allPTArray = $this->getPostTypes();
 
         ?>
         <p>
@@ -44,8 +41,25 @@ class widget_ambCPL extends WP_Widget {
             <input type="text" id="<?php echo $this->get_field_id( 'title' ) ?>" class="widefat" name="<?php echo $this->get_field_name( 'title' ) ?>" value="<?php echo  esc_attr( $instance['title'] ); ?>" />
         </p>
         <p>
+            <label>Select Post Type: </label>
+            <select id="<?php echo $this->get_field_id( 'postType' ) ?>" name="<?php echo $this->get_field_name( 'postType' ) ?>" class="widefat fpl_admin_pt_select">
+            <?php foreach ($allPTArray as $selPTData): ?>
+                <option value="<?php echo $selPTData['postTypeSlug']; ?>" <?php selected( $selPTData['postTypeSlug'], $instance['postType'], true ); ?>><?php echo $selPTData['postTypeName']; ?></option>
+            <?php endforeach; ?>
+            </select>
+        </p>
+        <p>
+            <label>Limit Query: </label>
+            <input type="number" id="<?php echo $this->get_field_id( 'limit' ) ?>" class="widefat" name="<?php echo $this->get_field_name( 'limit' ) ?>" <?php if(!empty($instance['limit']) ){ echo 'checked'; } ?> value="<?php echo  esc_attr( $instance['limit'] ); ?>" />
+        </p>
+        <p class="fpl_layout_all">
+            <label>Query offset: </label>
+            <input type="number" id="<?php echo $this->get_field_id( 'offset' ) ?>" class="widefat" name="<?php echo $this->get_field_name( 'offset' ) ?>" <?php if(!empty($instance['offset']) ){ echo 'checked'; } ?> value="<?php echo  esc_attr( $instance['offset'] ); ?>" />
+        </p>
+        <p>
             <label>Layout: </label>
             <select id="<?php echo $this->get_field_id( 'layout' ) ?>" name="<?php echo $this->get_field_name( 'layout' ) ?>" class="widefat fpl_layout_select">
+            	<option value="" <?php  echo selected( $layoutOption, $instance['layout'], true ); ?> >Default</option>
          	<?php 
 	         	foreach ($this->layouts as $layoutOption){
 	         		echo '<option value="'.$layoutOption.'" '.selected( $layoutOption, $instance['layout'], true ).'>'.$layoutOption.'</option>';
@@ -58,6 +72,9 @@ class widget_ambCPL extends WP_Widget {
 
 	function update( $new_instance, $old_instance ) {
 		$old_instance['title'] = strip_tags( stripcslashes($new_instance['title']) );
+        $old_instance['postType'] = strip_tags( stripcslashes($new_instance['postType']) );
+        $old_instance['limit'] = strip_tags( stripcslashes($new_instance['limit']) );
+        $old_instance['offset'] = strip_tags( stripcslashes($new_instance['offset']) );
         $old_instance['layout'] = strip_tags( stripcslashes($new_instance['layout']) );
 
         return $old_instance;
@@ -97,14 +114,16 @@ class widget_ambCPL extends WP_Widget {
 
 
 		//before loop content
-				$beforeFilePath = $this->getFilesPaths('php', $layoutFolder, 'before');
-				if( file_exists($beforeFilePath) ){
-					require_once($beforeFilePath); 
-				}else{ echo "<ul>"; }
+			$beforeFilePath = $this->getFilesPaths('php', $layoutFolder, 'before');
+			if( file_exists($beforeFilePath) ){
+				require_once($beforeFilePath); 
+			}else{ echo "<ul>"; }
 		// The loop
 			global $post;
 			$args = array( 
-				'numberposts' => 3 
+				'numberposts' 	=> $instance['limit'],
+				'offset' 		=> $instance['offset'],
+				'post_type' 	=>  $instance['postType']
 			);
 			$ambCPL_posts = get_posts( $args );
 			foreach( $ambCPL_posts as $post ) :  setup_postdata($post);
@@ -154,6 +173,25 @@ class widget_ambCPL extends WP_Widget {
 		$pathURL = get_stylesheet_directory_uri().$pathURL;
 
 		return $pathURL;
+	}
+
+	function getPostTypes(){
+		$PTArray = array();
+	    $allPostTypes = get_post_types();
+	    foreach ($allPostTypes as $select_post_type):
+	        $thisPTname = get_post_type_object($select_post_type)->label;
+	        $ptTaxArray = array();
+
+	        $excludePostTypes = array('attachment','revision','nav_menu_item');
+	        if(!in_array($select_post_type, $excludePostTypes)){
+	            $thisPTArray = array(
+	                'postTypeSlug' => $select_post_type,
+	                'postTypeName' => $thisPTname
+	            );
+	            array_push($PTArray, $thisPTArray);
+	        }
+	    endforeach;
+	    return $PTArray;
 	}
 
 }

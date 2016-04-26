@@ -3,11 +3,8 @@
 ###############
 
 -form settings (loop options)
--add default layout option on the form select (returns no value)
--get post type, categories, etc methods
+-get categories, etc methods
 -add form options to loop query
--loop args switcher (for diferents form method settings)
-
 
 ###############
 ### For 0.2 ###
@@ -15,6 +12,7 @@
 
 -improve css and js enqueues (test to add register at constructor and enqueue at output method)
 -create builtIn layouts (slider, etc)
+-pritify layout name at select
 -documentation
 
 
