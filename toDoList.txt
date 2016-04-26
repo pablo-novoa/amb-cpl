@@ -2,9 +2,7 @@
 ### For 0.1 ###
 ###############
 
--form settings (loop options)
--get categories, etc methods
--add form options to loop query
+-add form options to loop query (cat filter)
 
 ###############
 ### For 0.2 ###
@@ -21,3 +19,4 @@
 #############################
 
 -try unit tests
+-git releases
